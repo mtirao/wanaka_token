@@ -7,7 +7,7 @@
 {-# language StandaloneDeriving #-}
 {-# language TypeFamilies #-}
 
-module Token(findToken, insertToken, deleteToken, updateToken) where
+module Token(findToken, insertToken, deleteToken, updateToken, getClientId) where
 
 import Control.Monad.IO.Class
 import Data.Int (Int32, Int64)
@@ -88,3 +88,6 @@ delete1 u  = delete $ Delete
             , deleteWhere = \t ui -> ui.authtoken ==. lit u
             , returning = Projection (.clientid)
             }
+
+getClientId :: Token Result -> Text
+getClientId r = r.clientid

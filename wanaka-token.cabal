@@ -51,6 +51,7 @@ executable profiles
     , bytestring-conversion
     , configurator
     , hasql
+    , hasql-pool
     , http-types
     , jose-jwt
     , lens

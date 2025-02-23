@@ -55,6 +55,7 @@ dependencies:
 - bytestring-conversion
 - jose-jwt
 - hasql
+- hasql-pool
 - rel8
 executables:
   profiles:

@@ -7,7 +7,12 @@
 {-# language StandaloneDeriving #-}
 {-# language TypeFamilies #-}
 
-module Realm where
+module Realm(findRealm, 
+    insertRealm, 
+    deleteRealm, 
+    getClientId, 
+    getClientSecret, 
+    getGrantType) where
 
 import Control.Monad.IO.Class
 import Data.Int (Int32, Int64)
@@ -20,6 +25,7 @@ import Hasql.Statement (Statement (..))
 import Rel8
 import Prelude hiding (filter, null)
 import TokenModel
+import Control.Monad.Trans.RWS (get)
 
 data Realm f = Realm
     {clientid :: Column f Text
@@ -43,17 +49,17 @@ realmSchema = TableSchema
 
 --Function
 -- SELECT
-findProfile :: Text -> Connection -> IO (Either QueryError [Realm Result])
-findProfile clientsecret conn = do
+findRealm :: Text -> Connection -> IO (Either QueryError [Realm Result])
+findRealm clientsecret conn = do
                             let query = select $ do
                                             p <- each realmSchema
-                                            where_ $ (p.clientsecret ==. lit clientsecret)
+                                            where_ $ p.clientsecret ==. lit clientsecret
                                             return p
                             run (statement () query ) conn
 
 -- INSERT
-insertProfile :: TokenRequest -> Connection -> IO (Either QueryError [Text])
-insertProfile p  conn = do
+insertRealm :: TokenRequest -> Connection -> IO (Either QueryError [Text])
+insertRealm p  conn = do
                             run (statement () (insert1 p)) conn
 
 insert1 :: TokenRequest -> Statement () [Text]
@@ -65,8 +71,8 @@ insert1 p = insert $ Insert
             }
 
 -- DELETE
-deleteProfile :: Text -> Connection -> IO (Either QueryError [Text])
-deleteProfile u conn = do
+deleteRealm :: Text -> Connection -> IO (Either QueryError [Text])
+deleteRealm u conn = do
                         run (statement () (delete1 u )) conn
 
 delete1 :: Text -> Statement () [Text]
@@ -76,3 +82,12 @@ delete1 u  = delete $ Delete
             , deleteWhere = \t ui -> (ui.clientsecret ==. lit u)
             , returning = Projection (.clientsecret)
             }
+
+getClientId :: Realm Result -> Text
+getClientId r = r.clientid
+
+getClientSecret :: Realm Result -> Text
+getClientSecret r = r.clientsecret
+
+getGrantType :: Realm Result -> Text
+getGrantType r = r.granttype

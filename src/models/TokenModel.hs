@@ -51,4 +51,9 @@ instance ToJSON Payload where
         [
             "user" .= user,
             "exp" .= exp
-        ]                  
+        ] 
+
+instance FromJSON Payload where
+    parseJSON (Object v) = Payload <$>
+        v .: "user" <*>
+        v .: "exp"                 
