@@ -16,15 +16,13 @@ build-type:     Simple
 extra-source-files:
     README.md
 
-executable profiles
+executable wanaka-token
   main-is: Main.hs
   other-modules:
       TokenController
       ErrorMessage
       TokenModel
       Views
-      Connection
-      Hardcoded
       Realm
       Token
       Paths_wanaka_token
